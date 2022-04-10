@@ -7,6 +7,7 @@ class Menu extends React.Component
             sResponse: "Response will show here."
         }
 
+        // NOTE: Functions need to be bind to be used.
         this.TestGet = this.TestGet.bind(this);
         this.TestPost = this.TestPost.bind(this);
         this.CreateTable = this.CreateTable.bind(this);
@@ -136,7 +137,7 @@ class Menu extends React.Component
         return (
             <div>
                 <div>
-                    <div>{this.state.sResponse}</div>
+                    <div id="Response">{this.state.sResponse}</div>
                 </div>
                 <div>
                     <button onClick={this.TestGet}>Test GET</button>
