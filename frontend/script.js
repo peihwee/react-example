@@ -1,129 +1,164 @@
-/////////////////////////////////////////////////////////////////////
-// Initalize Constant to store DOM Elements
-/////////////////////////////////////////////////////////////////////
-const butTestGET = document.getElementById("testGET");
-const butTestPOST = document.getElementById("testPOST");
-
-const butCreate = document.getElementById("createTable");
-const butDrop = document.getElementById("dropTable");
-const butInsert = document.getElementById("insertMessage");
-const butSelect = document.getElementById("getMessages");
-const txtToSend = document.getElementById("messageToSend");
-const txtDisplay = document.getElementById("messagesDisplay");
-
-/////////////////////////////////////////////////////////////////////
-// Initalize Constant to store DOM Elements
-/////////////////////////////////////////////////////////////////////
-butTestGET.onclick = TestGet;
-butTestPOST.onclick = TestPost;
-butCreate.onclick = CreateTable;
-butDrop.onclick = DropTable;
-butInsert.onclick = InsertMessage;
-butSelect.onclick = GetAllMessages;
-
-/////////////////////////////////////////////////////////////////////
-// Function to Display Server Response
-/////////////////////////////////////////////////////////////////////
-function DisplayResponse(objData)
-{   
-    txtDisplay.innerHTML = "";
-    let sData = JSON.stringify(objData);
-    txtDisplay.append(sData);
-}
-
-/////////////////////////////////////////////////////////////////////
-// Function to Test GET with Server
-/////////////////////////////////////////////////////////////////////
-function TestGet()
+class Menu extends React.Component
 {
-    axios.get('http://localhost:3000/api', { params: { message: "Hello World!" } })
-    .then((response) => {
-        console.log(response.data); //View in Browser's Developer Tools
+    constructor() {
+        super()
+        this.state = {
+            sQuery: "",
+            sResponse: "Response will show here."
+        }
 
-        DisplayResponse(response.data);
-    })
-    .catch(function (error) {
-        txtDisplay.append(error);
-    });
+        this.TestGet = this.TestGet.bind(this);
+        this.TestPost = this.TestPost.bind(this);
+        this.CreateTable = this.CreateTable.bind(this);
+        this.DropTable = this.DropTable.bind(this);
+        this.InsertMessage = this.InsertMessage.bind(this);
+        this.GetAllMessages = this.GetAllMessages.bind(this);
+        this.DisplayResponse = this.DisplayResponse.bind(this);
+        this.OnTextfieldChange = this.OnTextfieldChange.bind(this);
+    }
+
+    /////////////////////////////////////////////////////////////////////
+    // Function to Display Server Response
+    /////////////////////////////////////////////////////////////////////
+    DisplayResponse(objData)
+    {
+        console.log("DisplayResponse: " + JSON.stringify(objData));
+        this.setState({
+            sResponse: JSON.stringify(objData)
+        });
+    }
+
+    /////////////////////////////////////////////////////////////////////
+    // Function to Test GET with Server
+    /////////////////////////////////////////////////////////////////////
+    TestGet()
+    {
+        axios.get('http://localhost:3000/api', { params: { message: "Hello World!" } })
+        .then((response) => {
+            console.log(response.data); //View in Browser's Developer Tools
+
+            this.DisplayResponse(response.data);
+        })
+        .catch(function (error) {
+            this.DisplayResponse(error);
+            console.log(error);
+        });
+    }
+
+    /////////////////////////////////////////////////////////////////////
+    // Function to Test POST with Server
+    /////////////////////////////////////////////////////////////////////
+    TestPost()
+    {
+        axios.post('http://localhost:3000/api/', { message: "Hello Again!" })
+        .then((response) => {
+            console.log(response.data); //View in Browser's Developer Tools
+
+            this.DisplayResponse(response.data);
+        })
+        .catch(function (error) {
+            this.DisplayResponse(error);
+        });
+    }
+
+    /////////////////////////////////////////////////////////////////////
+    // Function to Create Table
+    /////////////////////////////////////////////////////////////////////
+    CreateTable()
+    {
+        axios.post('http://localhost:3000/api/table', {})
+        .then((response) => {
+            console.log(response.data); //View in Browser's Developer Tools
+
+            this.DisplayResponse(response.data);
+        })
+        .catch(function (error) {
+            this.DisplayResponse(error);
+        });
+    }
+
+    /////////////////////////////////////////////////////////////////////
+    // Function to Drop Table using DELETE
+    /////////////////////////////////////////////////////////////////////
+    DropTable()
+    {
+        axios.delete('http://localhost:3000/api/table', {})
+        .then((response) => {
+            console.log(response.data); //View in Browser's Developer Tools
+
+            this.DisplayResponse(response.data);
+        })
+        .catch(function (error) {
+            this.DisplayResponse(error);
+        });
+    }
+
+    /////////////////////////////////////////////////////////////////////
+    // Function to Insert Row using POST
+    /////////////////////////////////////////////////////////////////////
+    InsertMessage()
+    {
+        axios.post('http://localhost:3000/api/message', { message : this.state.sQuery })
+        .then((response) => {
+            console.log(response.data); //View in Browser's Developer Tools
+
+            this.DisplayResponse(response.data);
+        })
+        .catch(function (error) {
+            this.DisplayResponse(error);
+        });
+    }
+
+    /////////////////////////////////////////////////////////////////////
+    // Function to Select Rows using GET
+    /////////////////////////////////////////////////////////////////////
+    GetAllMessages()
+    {
+        axios.get('http://localhost:3000/api/message', {})
+        .then((response) => {
+            console.log(response.data); //View in Browser's Developer Tools
+
+            this.DisplayResponse(response.data);
+        })
+        .catch(function (error) {
+            this.DisplayResponse(error);
+        });
+    }
+
+    OnTextfieldChange(event) {
+        this.setState({
+            sQuery: event.target.value 
+        });
+    }
+
+    render()
+    {
+        return (
+            <div>
+                <div>
+                    <div>{this.state.sResponse}</div>
+                </div>
+                <div>
+                    <button onClick={this.TestGet}>Test GET</button>
+                    <button onClick={this.TestPost}>Test POST</button>
+                </div>
+                <div>
+                    <button onClick={this.CreateTable}>Create Table</button>
+                    <button onClick={this.DropTable}>Drop Table</button>
+                </div>
+                <div>
+                    <input type="text" value={this.state.sQuery} onChange={this.OnTextfieldChange}></input>
+                    <button onClick={this.InsertMessage}>Send</button>
+                </div>
+                <div>
+                    <button onClick={this.GetAllMessages}>Retrieve</button>
+                </div>
+            </div>
+        );
+    }
 }
 
-/////////////////////////////////////////////////////////////////////
-// Function to Test POST with Server
-/////////////////////////////////////////////////////////////////////
-function TestPost()
-{
-    axios.post('http://localhost:3000/api/', { message: "Hello Again!" })
-    .then((response) => {
-        console.log(response.data); //View in Browser's Developer Tools
-
-        DisplayResponse(response.data);
-    })
-    .catch(function (error) {
-        txtDisplay.append(error);
-    });
-}
-
-/////////////////////////////////////////////////////////////////////
-// Function to Create Table
-/////////////////////////////////////////////////////////////////////
-function CreateTable()
-{
-    axios.post('http://localhost:3000/api/table', {})
-    .then((response) => {
-        console.log(response.data); //View in Browser's Developer Tools
-
-        DisplayResponse(response.data);
-    })
-    .catch(function (error) {
-        txtDisplay.append(error);
-    });
-}
-
-/////////////////////////////////////////////////////////////////////
-// Function to Drop Table using DELETE
-/////////////////////////////////////////////////////////////////////
-function DropTable()
-{
-    axios.delete('http://localhost:3000/api/table', {})
-    .then((response) => {
-        console.log(response.data); //View in Browser's Developer Tools
-
-        DisplayResponse(response.data);
-    })
-    .catch(function (error) {
-        txtDisplay.append(error);
-    });
-}
-
-/////////////////////////////////////////////////////////////////////
-// Function to Insert Row using POST
-/////////////////////////////////////////////////////////////////////
-function InsertMessage()
-{
-    axios.post('http://localhost:3000/api/message', { message : txtToSend.value })
-    .then((response) => {
-        console.log(response.data); //View in Browser's Developer Tools
-
-        DisplayResponse(response.data);
-    })
-    .catch(function (error) {
-        txtDisplay.append(error);
-    });
-}
-
-/////////////////////////////////////////////////////////////////////
-// Function to Select Rows using GET
-/////////////////////////////////////////////////////////////////////
-function GetAllMessages()
-{
-    axios.get('http://localhost:3000/api/message', {})
-    .then((response) => {
-        console.log(response.data); //View in Browser's Developer Tools
-
-        DisplayResponse(response.data);
-    })
-    .catch(function (error) {
-        txtDisplay.append(error);
-    });
-}
-
+ReactDOM.render(
+    React.createElement(Menu, {}),
+    document.getElementById('root')
+);
